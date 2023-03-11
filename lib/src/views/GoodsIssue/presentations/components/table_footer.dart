@@ -38,13 +38,10 @@ class _GoodsIssueTableFooterState extends State<GoodsIssueTableFooter> {
             : (widget.total! / widget.rowsPerPage) +
                 ((widget.total! % widget.rowsPerPage) > 0 ? 1 : 0),
         direction: Axis.horizontal,
-        availableRowsPerPage: [
-          ...widget.availableRowsPerPage,
-          (widget.total ?? 0 ~/ 1000) > 1 ? 1000 : widget.total ?? 0
-        ],
+        availableRowsPerPage: widget.availableRowsPerPage,
         onRowsPerPageChanged: (int? rowsPerPage) {
+          widget.pageController.selectedPageIndex = 0;
           widget.onRowsPerPageChanged?.call(rowsPerPage);
-          widget.pageController.firstPage();
         },
       ),
     );

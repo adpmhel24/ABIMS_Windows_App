@@ -69,6 +69,7 @@ class _ForSapTabState extends State<ForSapTab> {
       required String startDate,
       required String endDate,
       required String branch}) {
+    print("called");
     context.read<FetchingGoodsIssueBloc>().add(
           LoadAllGoodsIssue(
             {
@@ -113,6 +114,7 @@ class _ForSapTabState extends State<ForSapTab> {
               "from_date": startDate,
               "to_date": endDate,
               "branch": branch,
+              "size": _rowsPerPage,
             },
           ),
         );
@@ -130,6 +132,7 @@ class _ForSapTabState extends State<ForSapTab> {
               "from_date": startDate,
               "to_date": endDate,
               "branch": branch,
+              "size": _rowsPerPage,
             },
           ),
         );
@@ -187,11 +190,11 @@ class _ForSapTabState extends State<ForSapTab> {
             onShowResult: (context, starDate, endDate, branch) {
               _onShowResult(context,
                   startDate: starDate, endDate: endDate, branch: branch);
-              _pagerController.firstPage();
+              _pagerController.selectedPageIndex = 0;
             },
             onClear: () {
               _onClearFilter(context);
-              _pagerController.firstPage();
+              _pagerController.selectedPageIndex = 0;
             },
             builder: (_, startDate, endDate, branch) {
               return BlocBuilder<FetchingGoodsIssueBloc,
@@ -240,7 +243,7 @@ class _ForSapTabState extends State<ForSapTab> {
                           rowsPerPage: _rowsPerPage,
                           selectedDatas: _selectedNotifier.value,
                           onPageChanged: (v) {
-                            _onPageChanged.call(context,
+                            _onPageChanged(context,
                                 page: v,
                                 rowPerPage: _rowsPerPage,
                                 startDate: startDate.text,
@@ -312,17 +315,17 @@ class _ForSapTabState extends State<ForSapTab> {
                                                         ?.total ??
                                                     0,
                                                 onRowsPerPageChanged: (v) {
+                                                  setState(() {
+                                                    _rowsPerPage = v!;
+                                                    _dataSource
+                                                        .updateDataGriDataSource();
+                                                  });
                                                   _onPageSizeChanged.call(
                                                       context,
                                                       size: _rowsPerPage,
                                                       startDate: startDate.text,
                                                       endDate: endDate.text,
                                                       branch: branch.text);
-                                                  setState(() {
-                                                    _rowsPerPage = v!;
-                                                    _dataSource
-                                                        .updateDataGriDataSource();
-                                                  });
                                                 },
                                               )
                                             ],
@@ -462,24 +465,36 @@ class _ForSapTabState extends State<ForSapTab> {
         return Checkbox(
           checked: isAll,
           onChanged: (v) {
-            if (v!) {
+            if (v != null) {
+              if (v) {
+                _dataSource.datas = List<GoodsIssueHeaderModel>.from(_dataSource
+                    .datas
+                    .map((e) => e.copyWith(isSelected: true))).toList();
+                _dataSource.notifyListeners();
+                _selectedNotifier.value = [...selected, ..._dataSource.datas];
+              } else if (!v) {
+                var s = selected;
+                for (var i in _dataSource.datas) {
+                  s.remove(i);
+                }
+                _selectedNotifier.value = [
+                  ...s,
+                ];
+                _dataSource.datas = List<GoodsIssueHeaderModel>.from(_dataSource
+                    .datas
+                    .map((e) => e.copyWith(isSelected: false))).toList();
+                _dataSource.notifyListeners();
+              }
+            } else {
+              var notSelected = _dataSource.datas
+                  .where((element) => element.isSelected == false)
+                  .toList()
+                  .map((e) => e.copyWith(isSelected: true));
               _dataSource.datas = List<GoodsIssueHeaderModel>.from(_dataSource
                   .datas
                   .map((e) => e.copyWith(isSelected: true))).toList();
               _dataSource.notifyListeners();
-              _selectedNotifier.value = [...selected, ..._dataSource.datas];
-            } else if (!v) {
-              var s = selected;
-              for (var i in _dataSource.datas) {
-                s.remove(i);
-              }
-              _selectedNotifier.value = [
-                ...s,
-              ];
-              _dataSource.datas = List<GoodsIssueHeaderModel>.from(_dataSource
-                  .datas
-                  .map((e) => e.copyWith(isSelected: false))).toList();
-              _dataSource.notifyListeners();
+              _selectedNotifier.value = [...selected, ...notSelected];
             }
           },
           content: const Text("Select All"),
