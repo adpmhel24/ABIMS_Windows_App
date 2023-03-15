@@ -1,3 +1,4 @@
+import '../views/AdjustmentOut/presentations/adjustment_out.dart';
 import '/src/views/Master%20Data/products/view.dart';
 import 'package:auto_route/auto_route.dart';
 
@@ -26,6 +27,13 @@ import 'router_guard.dart';
           durationInMilliseconds: 100,
           page: GoodsIssuePage,
           path: "goods_issue",
+          initial: true,
+        ),
+        CustomRoute(
+          transitionsBuilder: TransitionsBuilders.noTransition,
+          durationInMilliseconds: 100,
+          page: InvAdjOutPage,
+          path: "inv_adj_out",
           initial: true,
         ),
         CustomRoute(

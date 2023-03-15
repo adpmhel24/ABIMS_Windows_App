@@ -16,8 +16,6 @@ class MainWrapperPage extends StatefulWidget {
 }
 
 class _MainWrapperPageState extends State<MainWrapperPage> with WindowListener {
-  bool value = false;
-
   int index = 0;
   final viewKey = GlobalKey();
 
@@ -35,6 +33,7 @@ class _MainWrapperPageState extends State<MainWrapperPage> with WindowListener {
 
   final routes = [
     const GoodsIssueRoute(),
+    const InvAdjOutRoute(),
     // const BillOfMaterialWrapperRoute(children: [
     //   BillOfMaterialsRoute(),
     // ]),
@@ -75,6 +74,11 @@ class _MainWrapperPageState extends State<MainWrapperPage> with WindowListener {
         items: [
           PaneItem(
             icon: const Icon(FluentIcons.issue_tracking),
+            title: const Text("Goods Issue"),
+            body: const SizedBox.shrink(),
+          ),
+          PaneItem(
+            icon: const Icon(FluentIcons.checked_out_by_you12),
             title: const Text("Goods Issue"),
             body: const SizedBox.shrink(),
           ),

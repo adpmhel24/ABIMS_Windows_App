@@ -4,4 +4,5 @@ class ConstantURLPath {
   static const String uom = '/api/item/uom';
   static const String branch = '/api/branch';
   static const String goodsIssue = '/api/production/issue_for_prod';
+  static const String invAdjOut = '/api/inv/adj_out';
 }

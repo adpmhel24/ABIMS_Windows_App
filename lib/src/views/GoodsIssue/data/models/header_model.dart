@@ -40,7 +40,7 @@ class GoodsIssueHeaderModel with _$GoodsIssueHeaderModel {
     @JsonKey(name: "date_confirmed") DateTime? dateConfirmed,
     @JsonKey(name: "confirm") bool? confirm,
     @JsonKey(name: "hashed_id") String? hashedId,
-    @Default(false) bool? isSelected,
+    @Default(false) bool isSelected,
     @JsonKey(name: "issue_row", defaultValue: [], fromJson: GoodsIssueHeaderModel.rowFromJson, toJson: GoodsIssueHeaderModel.rowToJson)
         List<GoodsIssueRowModel>? issueRow,
   }) = _GoodsIssueHeaderModel;

@@ -88,9 +88,9 @@ class GoodsIssueDataSource extends DataGridSource {
             child: Checkbox(
               checked: datas[index].isSelected,
               onChanged: (v) {
-                datas[index] = datas[index].copyWith(isSelected: v);
+                datas[index] = datas[index].copyWith(isSelected: v!);
 
-                if (v!) {
+                if (v) {
                   onSelected?.call(datas[index]);
                 } else {
                   onDeselected?.call(datas[index]);

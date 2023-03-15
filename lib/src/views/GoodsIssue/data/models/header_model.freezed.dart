@@ -63,7 +63,7 @@ mixin _$GoodsIssueHeaderModel {
   bool? get confirm => throw _privateConstructorUsedError;
   @JsonKey(name: "hashed_id")
   String? get hashedId => throw _privateConstructorUsedError;
-  bool? get isSelected => throw _privateConstructorUsedError;
+  bool get isSelected => throw _privateConstructorUsedError;
   @JsonKey(
       name: "issue_row",
       defaultValue: [],
@@ -126,7 +126,7 @@ abstract class $GoodsIssueHeaderModelCopyWith<$Res> {
           bool? confirm,
       @JsonKey(name: "hashed_id")
           String? hashedId,
-      bool? isSelected,
+      bool isSelected,
       @JsonKey(name: "issue_row", defaultValue: [], fromJson: GoodsIssueHeaderModel.rowFromJson, toJson: GoodsIssueHeaderModel.rowToJson)
           List<GoodsIssueRowModel>? issueRow});
 }
@@ -166,7 +166,7 @@ class _$GoodsIssueHeaderModelCopyWithImpl<$Res,
     Object? dateConfirmed = freezed,
     Object? confirm = freezed,
     Object? hashedId = freezed,
-    Object? isSelected = freezed,
+    Object? isSelected = null,
     Object? issueRow = freezed,
   }) {
     return _then(_value.copyWith(
@@ -254,10 +254,10 @@ class _$GoodsIssueHeaderModelCopyWithImpl<$Res,
           ? _value.hashedId
           : hashedId // ignore: cast_nullable_to_non_nullable
               as String?,
-      isSelected: freezed == isSelected
+      isSelected: null == isSelected
           ? _value.isSelected
           : isSelected // ignore: cast_nullable_to_non_nullable
-              as bool?,
+              as bool,
       issueRow: freezed == issueRow
           ? _value.issueRow
           : issueRow // ignore: cast_nullable_to_non_nullable
@@ -317,7 +317,7 @@ abstract class _$$_GoodsIssueHeaderModelCopyWith<$Res>
           bool? confirm,
       @JsonKey(name: "hashed_id")
           String? hashedId,
-      bool? isSelected,
+      bool isSelected,
       @JsonKey(name: "issue_row", defaultValue: [], fromJson: GoodsIssueHeaderModel.rowFromJson, toJson: GoodsIssueHeaderModel.rowToJson)
           List<GoodsIssueRowModel>? issueRow});
 }
@@ -354,7 +354,7 @@ class __$$_GoodsIssueHeaderModelCopyWithImpl<$Res>
     Object? dateConfirmed = freezed,
     Object? confirm = freezed,
     Object? hashedId = freezed,
-    Object? isSelected = freezed,
+    Object? isSelected = null,
     Object? issueRow = freezed,
   }) {
     return _then(_$_GoodsIssueHeaderModel(
@@ -442,10 +442,10 @@ class __$$_GoodsIssueHeaderModelCopyWithImpl<$Res>
           ? _value.hashedId
           : hashedId // ignore: cast_nullable_to_non_nullable
               as String?,
-      isSelected: freezed == isSelected
+      isSelected: null == isSelected
           ? _value.isSelected
           : isSelected // ignore: cast_nullable_to_non_nullable
-              as bool?,
+              as bool,
       issueRow: freezed == issueRow
           ? _value._issueRow
           : issueRow // ignore: cast_nullable_to_non_nullable
@@ -573,7 +573,7 @@ class _$_GoodsIssueHeaderModel implements _GoodsIssueHeaderModel {
   final String? hashedId;
   @override
   @JsonKey()
-  final bool? isSelected;
+  final bool isSelected;
   final List<GoodsIssueRowModel>? _issueRow;
   @override
   @JsonKey(
@@ -729,7 +729,7 @@ abstract class _GoodsIssueHeaderModel implements GoodsIssueHeaderModel {
           final bool? confirm,
       @JsonKey(name: "hashed_id")
           final String? hashedId,
-      final bool? isSelected,
+      final bool isSelected,
       @JsonKey(name: "issue_row", defaultValue: [], fromJson: GoodsIssueHeaderModel.rowFromJson, toJson: GoodsIssueHeaderModel.rowToJson)
           final List<GoodsIssueRowModel>? issueRow}) = _$_GoodsIssueHeaderModel;
 
@@ -800,7 +800,7 @@ abstract class _GoodsIssueHeaderModel implements GoodsIssueHeaderModel {
   @JsonKey(name: "hashed_id")
   String? get hashedId;
   @override
-  bool? get isSelected;
+  bool get isSelected;
   @override
   @JsonKey(
       name: "issue_row",

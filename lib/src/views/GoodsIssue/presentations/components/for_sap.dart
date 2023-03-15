@@ -69,7 +69,6 @@ class _ForSapTabState extends State<ForSapTab> {
       required String startDate,
       required String endDate,
       required String branch}) {
-    print("called");
     context.read<FetchingGoodsIssueBloc>().add(
           LoadAllGoodsIssue(
             {
@@ -143,9 +142,10 @@ class _ForSapTabState extends State<ForSapTab> {
   ) {
     _clearSelected();
     context.read<FetchingGoodsIssueBloc>().add(
-          const LoadAllGoodsIssue(
+          LoadAllGoodsIssue(
             {
               "is_for_sap": "True",
+              "size": _rowsPerPage,
             },
           ),
         );
@@ -162,10 +162,12 @@ class _ForSapTabState extends State<ForSapTab> {
           BlocProvider(
             create: (context) =>
                 FetchingGoodsIssueBloc(context.read<GoodsIssueRepo>())
-                  ..add(LoadAllGoodsIssue({
-                    "is_for_sap": "True",
-                    "branch": userBranch,
-                  })),
+                  ..add(
+                    LoadAllGoodsIssue({
+                      "is_for_sap": "True",
+                      "branch": userBranch,
+                    }),
+                  ),
           ),
           BlocProvider(
             create: (context) =>
@@ -187,9 +189,9 @@ class _ForSapTabState extends State<ForSapTab> {
             }
           },
           child: BaseGoodsIssue(
-            onShowResult: (context, starDate, endDate, branch) {
+            onShowResult: (context, startDate, endDate, branch) {
               _onShowResult(context,
-                  startDate: starDate, endDate: endDate, branch: branch);
+                  startDate: startDate, endDate: endDate, branch: branch);
               _pagerController.selectedPageIndex = 0;
             },
             onClear: () {
@@ -199,7 +201,7 @@ class _ForSapTabState extends State<ForSapTab> {
             builder: (_, startDate, endDate, branch) {
               return BlocBuilder<FetchingGoodsIssueBloc,
                   FetchingGoodsIssueState>(
-                builder: (context, state) {
+                builder: (context, fetchingState) {
                   return BlocListener<GoodsIssueUpdateSapBloc,
                       GoodsIssueUpdateSapState>(
                     listener: (context, state) {
@@ -227,10 +229,10 @@ class _ForSapTabState extends State<ForSapTab> {
                     child: LayoutBuilder(
                       builder: (builderContext, constraints) {
                         List<GoodsIssueHeaderModel> datas =
-                            (state.result.data == null)
+                            (fetchingState.result.data == null)
                                 ? []
                                 : List<GoodsIssueHeaderModel>.from(
-                                    state.result.data!.map(
+                                    fetchingState.result.data!.map(
                                       (e) => GoodsIssueHeaderModel.fromJson(
                                         e.toJson(),
                                       ),
@@ -277,8 +279,8 @@ class _ForSapTabState extends State<ForSapTab> {
                                 children: [
                                   SizedBox(
                                     width: Responsive.isDesktop(buildContext)
-                                        ? constraints.maxWidth * .60
-                                        : constraints.maxWidth * .75,
+                                        ? constraints.maxWidth * .60 - 10
+                                        : constraints.maxWidth * .75 - 10,
                                     height: double.infinity,
                                     child: Card(
                                       child: LayoutBuilder(
@@ -289,7 +291,7 @@ class _ForSapTabState extends State<ForSapTab> {
                                           return Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              state.result.data != null
+                                              fetchingState.result.data != null
                                                   ? SizedBox(
                                                       height: height,
                                                       child:
@@ -311,8 +313,8 @@ class _ForSapTabState extends State<ForSapTab> {
                                                 rowsPerPage: _rowsPerPage,
                                                 pageController:
                                                     _pagerController,
-                                                total: state.result.pagination
-                                                        ?.total ??
+                                                total: fetchingState.result
+                                                        .pagination?.total ??
                                                     0,
                                                 onRowsPerPageChanged: (v) {
                                                   setState(() {
@@ -461,41 +463,38 @@ class _ForSapTabState extends State<ForSapTab> {
     return ValueListenableBuilder(
       valueListenable: _selectedNotifier,
       builder: (context, selected, _) {
-        bool? isAll = areListsEqual(_dataSource.datas, selected);
+        bool? isAll = areListsEqual(
+          selected: selected,
+          currentDataInPage: _dataSource.datas,
+        );
         return Checkbox(
           checked: isAll,
           onChanged: (v) {
+            var selectedData = [...selected];
             if (v != null) {
               if (v) {
-                _dataSource.datas = List<GoodsIssueHeaderModel>.from(_dataSource
-                    .datas
-                    .map((e) => e.copyWith(isSelected: true))).toList();
-                _dataSource.notifyListeners();
-                _selectedNotifier.value = [...selected, ..._dataSource.datas];
-              } else if (!v) {
-                var s = selected;
-                for (var i in _dataSource.datas) {
-                  s.remove(i);
+                for (int i = 0; i < _dataSource.datas.length; i++) {
+                  if (!_dataSource.datas[i].isSelected) {
+                    _dataSource.datas[i] =
+                        _dataSource.datas[i].copyWith(isSelected: true);
+                    _dataSource.notifyListeners();
+                    selectedData.add(_dataSource.datas[i]);
+                  }
                 }
-                _selectedNotifier.value = [
-                  ...s,
-                ];
+              } else if (!v) {
+                for (var i in _dataSource.datas) {
+                  selectedData.remove(i);
+                }
+
                 _dataSource.datas = List<GoodsIssueHeaderModel>.from(_dataSource
                     .datas
                     .map((e) => e.copyWith(isSelected: false))).toList();
                 _dataSource.notifyListeners();
               }
-            } else {
-              var notSelected = _dataSource.datas
-                  .where((element) => element.isSelected == false)
-                  .toList()
-                  .map((e) => e.copyWith(isSelected: true));
-              _dataSource.datas = List<GoodsIssueHeaderModel>.from(_dataSource
-                  .datas
-                  .map((e) => e.copyWith(isSelected: true))).toList();
-              _dataSource.notifyListeners();
-              _selectedNotifier.value = [...selected, ...notSelected];
             }
+            _selectedNotifier.value = [
+              ...selectedData,
+            ];
           },
           content: const Text("Select All"),
         );
@@ -514,17 +513,15 @@ class _ForSapTabState extends State<ForSapTab> {
   }
 }
 
-bool? areListsEqual(
-    List<GoodsIssueHeaderModel> list1, List<GoodsIssueHeaderModel> selected) {
-  // check if both are lists
-  if (selected.isEmpty || list1.isEmpty) {
+bool? areListsEqual({
+  required List<GoodsIssueHeaderModel> currentDataInPage,
+  required List<GoodsIssueHeaderModel> selected,
+}) {
+  if (selected.isEmpty || currentDataInPage.isEmpty) {
     return false;
   }
-  if ((selected.length % list1.length) != 0) {
-    return null;
-  }
 
-  for (var i in list1) {
+  for (var i in currentDataInPage) {
     var isInList2 = selected.firstWhereOrNull((e) => e.id == i.id);
     if (isInList2 == null) {
       return false;
