@@ -57,6 +57,7 @@ class _BaseAdjustmentOutState extends State<BaseAdjustmentOut> {
     _startDateController.dispose();
     _endDateController.dispose();
     _branchController.dispose();
+    filterCountNotifier.dispose();
     menuController.dispose();
 
     super.dispose();

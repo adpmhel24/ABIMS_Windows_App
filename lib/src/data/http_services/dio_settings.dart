@@ -12,7 +12,7 @@ class DioSettings {
       url = "https://abc-api.jpoonandsons.com";
     } else {
       // debug mode
-      url = "http://localhost:8082";
+      url = "https://abc-api.jpoonandsons.com";
       // url = "https://abc-api.jpoonandsons.com";
     }
     return Dio(
